@@ -7,8 +7,7 @@
 ---
 
 ## Summary
-**Short description for a CV / portfolio:**  
-> *Currently I'm running a containerized Apache Airflow DAG that uses Selenium to scrape product data from a dynamic e-commerce site.*
+> *This repo was thought for demostrate how to get running a containerized Apache Airflow DAG that uses Selenium to scrape product data from a dynamic e-commerce site.*
 
 ---
 
@@ -19,10 +18,53 @@
 
 ---
 
-## Repo structure
-├── dags/
-│ ├── coto_verificar_productos.py
-│ └── output/ # screenshots & page sources (create this before running)
-├── Dockerfile
-├── docker-compose.yml
-└── README.md
+## 1. Getting airflow up and running
+run docker-compose up --build
+This will start:
+Airflow webserver
+Airflow scheduler
+Postgres metadata database
+Selenium Standalone Chrome (for browser automation)
+You can access the Airflow webserver at http://localhost:8080.
+The default username and password are: admin/admin
+
+---
+
+## 2. Initializing Airflow
+Before running any DAGs, initialize the Airflow database and create an admin user:
+docker-compose run airflow-init
+
+---
+## 3. Running the scraping DAG
+The main DAG is located at:
+dags/coto_verificar_productos.py
+
+# It performs the following:
+Opens a Coto Digital product category page.
+Scrolls down to load dynamic content.
+Saves a screenshot (coto_screenshot.png) and the HTML page source (coto_page_source.html) in dags/output/.
+Logs the first 5 product names found.
+# Steps to run it:
+Go to the Airflow webserver.
+Enable the coto_verificar_productos DAG.
+Click the trigger button to run it manually.
+Open the Graph View to see task progress.
+Check Logs to see product names in console output.
+View generated files in dags/output/.
+
+----
+
+## 4. Output example
+Productos encontrados: 20
+1. Alfajor TERRABUSI Triple Clásico 70g
+2. Alfajor HAVANNA Chocolate
+3. Alfajor TITA
+4. Alfajor MILKA Oreo
+5. Alfajor JORGITO Triple
+
+----
+
+## 5. Additional notes
+Selenium service runs at http://selenium:4444/wd/hub and is accessed from Airflow tasks via Remote WebDriver.
+
+I still have to do some testing to get sure the data is exctracted too with headless instance
