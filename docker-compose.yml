@@ -2,10 +2,12 @@ version: '3.9'
 
 x-airflow-common: &airflow-common
   build: .
+  env_file:
+    - .env
   environment:
     &airflow-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
-    # Use an environment variable or .env for secrets and connections
+    # use .env variables
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__FERNET_KEY: "${AIRFLOW__CORE__FERNET_KEY}"
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
