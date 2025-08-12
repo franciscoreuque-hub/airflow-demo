@@ -5,11 +5,12 @@ x-airflow-common: &airflow-common
   environment:
     &airflow-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    # Use an environment variable or .env for secrets and connections
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-    AIRFLOW__CORE__FERNET_KEY: 'U4llvP2nA1BsdY1zpKxS9pEGR9rG1m2lZcY0kVvmtv4='
+    AIRFLOW__CORE__FERNET_KEY: "${AIRFLOW__CORE__FERNET_KEY}"
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
-    AIRFLOW__WEBSERVER__SECRET_KEY: 'mysupersecretkey1234567890abcdef'
+    AIRFLOW__WEBSERVER__SECRET_KEY: "${AIRFLOW__WEBSERVER__SECRET_KEY}"
   volumes:
     - ./dags:/opt/airflow/dags
   user: "${AIRFLOW_UID:-50000}:0"
@@ -61,8 +62,8 @@ services:
     networks:
       - airflow_net
     ports:
-      - "4444:4444"
-      - "7900:7900"
+      - "4444:4444"   # WebDriver
+      - "7900:7900"   # optional VNC
     restart: unless-stopped
 
 networks:
